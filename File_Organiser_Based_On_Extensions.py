@@ -10,13 +10,13 @@ from extensions_asset import folder_path_according_to_file_extension #type: igno
 
 
 
-def browse_files() -> str:  # DEAD CODE
+def browse_files() -> str:  # Might soon be unnecessary.
     downloads_path = os.path.join(os.path.expanduser("~"), "Downloads")
     folder = filedialog.askdirectory(
         initialdir=downloads_path, title="Select a folder to sort"
     )
-    # if not folder:
-    #     folder = downloads_path
+    if not folder:
+        folder = downloads_path
     return folder
 
 
