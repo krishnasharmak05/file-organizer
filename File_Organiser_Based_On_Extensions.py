@@ -53,8 +53,8 @@ def file_organising_using_file_extensions(file_list: list[str], folder: str) -> 
         else:
             filetype_path = filetype_handler(folder, file)
             if filetype_path == -1:
-                logging.error("Unkown filetype for file:\n" + file + "\n\n")
-                tts.engine.say("Un nown filetype for file:" + file ) # Line is written to match the phenetics of the engine. "Un nown" is not a spelling mistake.
+                logging.error("Unknown filetype for file:\n" + file + "\n\n")
+                tts.engine.say("Unknown filetype for file:" + file ) 
                 tts.engine.runAndWait()                
             elif not os.path.exists(filetype_path): #type: ignore
                 os.makedirs(filetype_path) #type: ignore
