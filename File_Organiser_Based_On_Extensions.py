@@ -5,7 +5,7 @@ import shutil
 import sys
 from tkinter import filedialog
 import TTSEngine_Handler as tts
-sys.path.append("./File_Organiser_Based_On_Extensions/assets")
+sys.path.append("./assets")
 from extensions_asset import folder_path_according_to_file_extension #type: ignore
 
 
@@ -15,8 +15,8 @@ def browse_files() -> str:  # DEAD CODE
     folder = filedialog.askdirectory(
         initialdir=downloads_path, title="Select a folder to sort"
     )
-    if not folder:
-        folder = downloads_path
+    # if not folder:
+    #     folder = downloads_path
     return folder
 
 
@@ -60,7 +60,7 @@ def file_organising_using_file_extensions(file_list: list[str], folder: str) -> 
                 os.makedirs(filetype_path) #type: ignore
             if filetype_path != -1:
                 shutil.move(file, filetype_path) #type: ignore
-            
+    tts.engine.stop()
     os.chdir(cwd)
     return None
 
