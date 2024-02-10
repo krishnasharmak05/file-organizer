@@ -1,6 +1,10 @@
 Suggestion, Important: Single Responsibility Principle - Make sure that each function has one task to do.
 Suggestion, Important: Make the code more readable.
-Suggestion, Important: ADD a warning if the browse_files function returns the default folder, that warns that the default folder is automatically selected. ADD a functionality that lets the user prevent the default folder from being selected.
 Suggestion, Important: ADD Multithreading for the text to speech engine
 Suggestion, Important: ADD Counting for the number of files processed and number of files remaining.
 Suggestion: For each call, use tkinter to get a loading window, similar to the one we get for copy pasting files.
+Suggesion, Important: Follow the object-oriented programming paradigm.
+
+Bug --FIXED: Check why folder has None value. Make sure that it either takes proper value or change the code to accept None.
+Bug: Make sure that the error case wherein, the file to be moved is already inside the destination folder, is handled properly. (Idea: main.py)
+Bug --FIXED: Set up properly, the path that the function calls take up.
