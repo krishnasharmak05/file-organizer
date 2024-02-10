@@ -1,28 +1,19 @@
 import logging
 import os
-import re
 import shutil
 import sys
 import time
-
-# import tkinter as tk
-# from tkinter import filedialog
 from tkinter import messagebox
 import customtkinter as tk
 from customtkinter import filedialog
 import pyautogui
-
-# import pyautogui
 import TTSEngine_Handler as tts
 
 sys.path.append("./assets")
 from extensions_asset import folder_path_according_to_file_extension
 
 
-# Refactor browse_files.
-
-
-def browse_files() -> str:  # Might soon be unnecessary.
+def browse_files() -> str:
     folder: str = filedialog.askdirectory(
         initialdir=downloads_path, mustexist=True, title="Select a folder to sort"
     )
@@ -39,12 +30,14 @@ def warn() -> str:
     choices = ["Let me choose a folder", "Yes", "No"]
     alertbox = tk.CTk()
     alertbox.withdraw()
-    while True:    
+    while True:
         print("Here")
-        response = pyautogui.confirm(warning, title, buttons=choices) 
+        response = pyautogui.confirm(warning, title, buttons=choices)
         if response == "Let me choose a folder" and warning_count < 3:
             folder = filedialog.askdirectory(
-                initialdir=downloads_path, mustexist=True, title="Select a folder to sort"
+                initialdir=downloads_path,
+                mustexist=True,
+                title="Select a folder to sort",
             )
             if not folder:
                 warning_count += 1
@@ -58,25 +51,26 @@ def warn() -> str:
             if alertbox and APP:
                 alertbox.destroy()
                 APP = False
-                
+
             folder = "null"
             break
         elif response == "Yes":
             if alertbox and APP:
                 alertbox.destroy()
                 APP = False
-                
-            folder =  downloads_path
+
+            folder = downloads_path
             break
         else:
             messagebox.showinfo(
-                "Exiting Script", "The script has successfully exited without running now."
+                "Exiting Script",
+                "The script has successfully exited without running now.",
             )
             if alertbox and APP:
                 alertbox.destroy()
                 APP = False
-                
-            folder =  "null"
+
+            folder = "null"
             break
         print("End")
     if APP:
@@ -94,7 +88,6 @@ def get_files(folder: str) -> list[str]:
 
 
 def filetype_handler(folder: str, file: str) -> str | int:
-    # Get the dict.values and based on dict indices, sort em. Reduce loops.
     new_folder_names_after_sorting = folder_path_according_to_file_extension.keys()
     try:
         extension = os.path.splitext(file)[1]
@@ -138,11 +131,11 @@ def file_organising_using_file_extensions(file_list: list[str], folder: str) -> 
                     tts.engine.say("Shut-il Error: ")
                     tts.engine.say(e)
                     tts.engine.runAndWait()
-            
+
             if destination_folder_path == -1:
-                    logging.error("Unknown filetype for file:\n" + file + "\n\n")
-                    fail_count += 1
-                    unknown_files.append(file)
+                logging.error("Unknown filetype for file:\n" + file + "\n\n")
+                fail_count += 1
+                unknown_files.append(file)
 
     tts.engine.stop()
     os.chdir(cwd)
@@ -158,13 +151,11 @@ def file_organising_using_file_extensions(file_list: list[str], folder: str) -> 
     return None
 
 
-
 downloads_path = os.path.join(os.path.expanduser("~"), "Downloads")
 
 if __name__ == "__main__":
-
     folder = browse_files()
-    if folder != "null":        
+    if folder != "null":
         file_list = get_files(folder)
         print(file_list)
         file_organising_using_file_extensions(file_list, folder)
