@@ -150,8 +150,18 @@ def file_organising_using_file_extensions(file_list: list[str], folder: str) -> 
         tts.engine.runAndWait()
     return None
 
+def downloads_path_not_found_error():
+    return filedialog.askdirectory(
+                mustexist=True,
+                title="Select a folder to sort",
+            )
 
-downloads_path = os.path.join(os.path.expanduser("~"), "Downloads")
+
+try:
+    downloads_path = os.path.join(os.path.expanduser("~"), "Downloads")
+except Exception as e:
+    messagebox.showerror("Path to Downloads folder not found. Please enter the path to the downloads folder")
+    downloads_path = downloads_path_not_found_error()
 
 if __name__ == "__main__":
     folder = browse_files()
