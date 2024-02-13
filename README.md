@@ -9,9 +9,6 @@ This program has only been tested on Windows 11.
 ## TODO
 
 * Test this program on operating systems other than Windows 11.
+* Add docs, __init__.py, as required.
 * Add try and excepts for import statements. If ModuleNotFound exception, then do a pip install of the module. Use the requirements.txt file.
-
-## Status
-
-I am still working on adding some new nice features, but the basic idea is already available. 
 
