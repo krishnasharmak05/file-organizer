@@ -1,0 +1,13 @@
+[project]
+authors = {name = "Krishna Sharma K", email = "krishnasharma.k2023@vitstudent.ac.in"}
+dependencies = ["customTkinter", "PyAutoGUI", "pyttsx3"]
+desciption = "File extension based file organizer"
+license = {file = "LICENSE"}
+name = "file-organizer"
+readme = {file = "README.md", content-type = "text/markdown"}
+requires-python = ">=3.9"
+version = "1.0.1"
+
+[project.urls]
+GitHub = "https://github.com/krishnasharmak05/file-organizer"
+Issues = "https://github.com/krishnasharmak05/file-organizer/issues"
