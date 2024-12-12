@@ -11,6 +11,16 @@ import TTSEngine_Handler as tts
 
 sys.path.append("./assets")
 from extensions_asset import folder_path_according_to_file_extension
+folder_path_according_to_file_extension = dict(folder_path_according_to_file_extension)
+
+
+
+try:
+    downloads_path = os.path.join(os.path.expanduser("~"), "Downloads")
+except Exception as e:
+    messagebox.showerror("Path to Downloads folder not found. Please enter the path to the downloads folder")
+    downloads_path = filedialog.askdirectory(mustexist=True, title="Select a folder to sort")
+
 
 
 def browse_files() -> str:
@@ -100,7 +110,7 @@ def filetype_handler(folder: str, file: str) -> str | int:
             elif i == "end":
                 return -1
             else:
-                logging.debug("No file extension matched until end of dictionary.\n\n")
+                logging.debug("No file extension matched in known list of extension. Please report this bug on github.(gttps://github.com/krishnasharmak05/file-organizer/issues/)\n\n")
     except Exception as e:
         logging.fatal(f"Failed on this file: {file}, with error: {e}\n\n")
         extension = None
@@ -108,17 +118,18 @@ def filetype_handler(folder: str, file: str) -> str | int:
 
 
 def file_organising_using_file_extensions(file_list: list[str], folder: str) -> None:
-    cwd = os.getcwd()
+    original_dir = os.getcwd()
     os.chdir(folder)
-    log_file_path = os.path.join(os.path.expanduser(os.getcwd()), "logging.txt")
+    log_file_path = os.path.join(os.getcwd(), "logging.txt")
     logging.basicConfig(filename=log_file_path, level=logging.INFO)
     fail_count = 0
     unknown_files = []
+    make_backups()
     for file in file_list:
-        if file == "logging.txt" or "DNM" in file:
+        if file == "logging.txt" or "_DNM" in file:
             continue
         elif os.path.isdir(os.path.join(folder, file)):
-            logging.info("Found a directory titled:\n" + file + "\n\n")
+            logging.info("Found a directory titled: " + file + ". To organize recursively, add a -r command while main.py.\n\n")
         else:
             destination_folder_path = filetype_handler(folder, file)
             if type(destination_folder_path) == str:
@@ -138,7 +149,7 @@ def file_organising_using_file_extensions(file_list: list[str], folder: str) -> 
                 unknown_files.append(file)
 
     tts.engine.stop()
-    os.chdir(cwd)
+    os.chdir(original_dir)
     if fail_count == 1:
         time.sleep(1)
         tts.engine.say("Unknown file type for file:", unknown_files)
@@ -150,18 +161,7 @@ def file_organising_using_file_extensions(file_list: list[str], folder: str) -> 
         tts.engine.runAndWait()
     return None
 
-def downloads_path_not_found_error():
-    return filedialog.askdirectory(
-                mustexist=True,
-                title="Select a folder to sort",
-            )
 
-
-try:
-    downloads_path = os.path.join(os.path.expanduser("~"), "Downloads")
-except Exception as e:
-    messagebox.showerror("Path to Downloads folder not found. Please enter the path to the downloads folder")
-    downloads_path = downloads_path_not_found_error()
 
 if __name__ == "__main__":
     folder = browse_files()
