@@ -1,26 +1,58 @@
-import logging
-import os
-import shutil
 import sys
-import time
-from tkinter import messagebox
-import customtkinter as tk
-from customtkinter import filedialog
-import pyautogui
-import TTSEngine_Handler as tts
 
 sys.path.append("./assets")
 from extensions_asset import folder_path_according_to_file_extension
-folder_path_according_to_file_extension = dict(folder_path_according_to_file_extension)
 
+
+from assets.animated_print import AnimatedPrint
+import customtkinter as tk
+from customtkinter import filedialog
+import logging
+import os
+import pyautogui
+import time
+from tkinter import messagebox
+import TTSEngine_Handler as tts
+import shutil
+
+animated_print = AnimatedPrint.animated_print
+folder_path_according_to_file_extension = dict(folder_path_according_to_file_extension)
 
 
 try:
     downloads_path = os.path.join(os.path.expanduser("~"), "Downloads")
 except Exception as e:
-    messagebox.showerror("Path to Downloads folder not found. Please enter the path to the downloads folder")
-    downloads_path = filedialog.askdirectory(mustexist=True, title="Select a folder to sort")
+    messagebox.showerror(
+        "Path to Downloads folder not found. Please enter the path to the downloads folder"
+    )
+    downloads_path = filedialog.askdirectory(
+        mustexist=True, title="Select a folder to sort"
+    )
 
+
+def make_backups(file) -> str:
+    """
+    Makes backups of the files before moving them to the new folder.
+    Backup file is saved with the same name as the original file with .bak extension in a 'Backup' folder.
+    This is done so that no files are lost in case of any error.
+
+    @params:
+    file: str -> Path to the file to be backed up.
+
+    @returns:
+    backup_folder: str -> Path to the folder where the backup file is stored.
+    """
+
+    animated_print("Making backups of the files before moving them to the new folder. Please wait...")
+    try:
+        backup_folder = os.path.realpath(os.path.join(os.path.dirname(file), "Backup"))
+        if not os.path.exists(backup_folder):
+            os.makedirs(backup_folder)
+        backup_file_path = os.path.join(backup_folder, os.path.basename(file) + ".bak")
+        shutil.copy(file, backup_file_path)
+    except Exception as e:
+        logging.error(f"Error: {e}\n\n")
+    return backup_folder
 
 
 def browse_files() -> str:
@@ -110,7 +142,9 @@ def filetype_handler(folder: str, file: str) -> str | int:
             elif i == "end":
                 return -1
             else:
-                logging.debug("No file extension matched in known list of extension. Please report this bug on github.(gttps://github.com/krishnasharmak05/file-organizer/issues/)\n\n")
+                logging.debug(
+                    "No file extension matched in known list of extension. Please report this bug on github.(gttps://github.com/krishnasharmak05/file-organizer/issues/)\n\n"
+                )
     except Exception as e:
         logging.fatal(f"Failed on this file: {file}, with error: {e}\n\n")
         extension = None
@@ -124,12 +158,17 @@ def file_organising_using_file_extensions(file_list: list[str], folder: str) -> 
     logging.basicConfig(filename=log_file_path, level=logging.INFO)
     fail_count = 0
     unknown_files = []
-    make_backups()
     for file in file_list:
+        ## Display the location of this backup folder to the user if required. Or, use it to restore all data from, if anything goes wrong.
+        backup_folder = make_backups(os.path.realpath(os.path.join(folder, file)))
         if file == "logging.txt" or "_DNM" in file:
             continue
         elif os.path.isdir(os.path.join(folder, file)):
-            logging.info("Found a directory titled: " + file + ". To organize recursively, add a -r command while main.py.\n\n")
+            logging.info(
+                "Found a directory titled: "
+                + file
+                + ". To organize recursively, add a -r command while main.py.\n\n"
+            )
         else:
             destination_folder_path = filetype_handler(folder, file)
             if type(destination_folder_path) == str:
@@ -162,10 +201,8 @@ def file_organising_using_file_extensions(file_list: list[str], folder: str) -> 
     return None
 
 
-
 if __name__ == "__main__":
     folder = browse_files()
     if folder != "null":
         file_list = get_files(folder)
-        print(file_list)
         file_organising_using_file_extensions(file_list, folder)

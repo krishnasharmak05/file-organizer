@@ -16,6 +16,14 @@ class AnimatedPrint:
             print()
             return None
         
+    
+    @classmethod
+    def progress_indicator(self, percentage: int):
+        completed = "▓"
+        remaining = "░"
+
+        ## Work from here...Not Complete.
+        
 
 if __name__ == "__main__":
     AnimatedPrint.animated_print("Hello, World!")
