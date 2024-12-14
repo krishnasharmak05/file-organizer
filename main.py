@@ -43,7 +43,6 @@ def make_backups(file) -> str:
     backup_folder: str -> Path to the folder where the backup file is stored.
     """
 
-    animated_print("Making backups of the files before moving them to the new folder. Please wait...")
     try:
         backup_folder = os.path.realpath(os.path.join(os.path.dirname(file), "Backup"))
         if not os.path.exists(backup_folder):
@@ -73,7 +72,6 @@ def warn() -> str:
     alertbox = tk.CTk()
     alertbox.withdraw()
     while True:
-        print("Here")
         response = pyautogui.confirm(warning, title, buttons=choices)
         if response == "Let me choose a folder" and warning_count < 3:
             folder = filedialog.askdirectory(
@@ -114,7 +112,6 @@ def warn() -> str:
 
             folder = "null"
             break
-        print("End")
     if APP:
         alertbox.mainloop()
     return folder
@@ -158,16 +155,18 @@ def file_organising_using_file_extensions(file_list: list[str], folder: str) -> 
     logging.basicConfig(filename=log_file_path, level=logging.INFO)
     fail_count = 0
     unknown_files = []
+    animated_print("Making backups of the files before moving them to the new folder. Please wait...")
     for file in file_list:
         ## Display the location of this backup folder to the user if required. Or, use it to restore all data from, if anything goes wrong.
         backup_folder = make_backups(os.path.realpath(os.path.join(folder, file)))
-        if file == "logging.txt" or "_DNM" in file:
+    for file in file_list:
+        if file == "logging.txt" or "_DNM" in file or file == "Backup" or file.endswith(".bak"):
             continue
         elif os.path.isdir(os.path.join(folder, file)):
             logging.info(
                 "Found a directory titled: "
                 + file
-                + ". To organize recursively, add a -r command while main.py.\n\n"
+                + ". To organize recursively, add a -r command while running    main.py.\n\n"
             )
         else:
             destination_folder_path = filetype_handler(folder, file)
@@ -190,12 +189,14 @@ def file_organising_using_file_extensions(file_list: list[str], folder: str) -> 
     tts.engine.stop()
     os.chdir(original_dir)
     if fail_count == 1:
+        animated_print("Unknown file type for file: "+unknown_files[0])
         time.sleep(1)
         tts.engine.say("Unknown file type for file:", unknown_files)
         tts.engine.runAndWait()
     elif fail_count > 1:
         time.sleep(1)
         tts_statement = f"Multiple files found, for which file type is unknown. Refer logging.txt in {folder} for more information."
+        animated_print(tts_statement)
         tts.engine.say(tts_statement)
         tts.engine.runAndWait()
     return None
