@@ -1,10 +1,12 @@
 import shutil
+from logging import CRITICAL, DEBUG, ERROR, FATAL, INFO, WARN, WARNING
 from pathlib import Path
 
 from typing_extensions import Dict, List
 
 from refactor.BackupManager import BackupManager
 from refactor.Classifier import Classifier
+from refactor.Exceptions import UnknownLoggingLevelException
 from refactor.Logger import Logger
 from refactor.Status import Status
 
@@ -59,9 +61,23 @@ class FileOrganizer:
                     )
                     raise
 
-    def _log_details(self):
-        # TODO: Implement log details
-        pass
+    def _log_details(self, details, level):
+        log = None
+        if level == ERROR:
+            log = self.logger.error
+        elif level == INFO:
+            log = self.logger.info
+        elif level == WARN:
+            log = self.logger.warn
+        elif level == CRITICAL:
+            log = self.logger.critical
+        elif level == DEBUG:
+            log = self.logger.debug
+        else:
+            raise UnknownLoggingLevelException(
+                "Level of Logging is unknown. This error should not have happened!"
+            )
+        log(details)
 
     def _log_summary(self):
         if self.status == Status.SUCCESS:
