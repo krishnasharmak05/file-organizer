@@ -1,4 +1,7 @@
 import logging
+import sys
+
+from typing_extensions import Callable
 
 
 class Logger:
@@ -16,11 +19,19 @@ class Logger:
     def info(self, message):
         self.logger.info(message)
 
-    def warn(self, message):
-        self.logger.warn(message)
+    def warning(self, message):
+        self.logger.warning(message)
 
-    def critical(self, message):
+    def critical(self, message, cleanup: Callable | None = None):
+        """
+        Logs a critical message and forces the program to exit.
+        """
+        self.logger.critical("The program has encountered a critical error.")
         self.logger.critical(message)
+        if cleanup:
+            cleanup()
+        self.logger.critical("The program will now exit.")
+        sys.exit(0)
 
     def debug(self, message):
         self.logger.debug(message)
