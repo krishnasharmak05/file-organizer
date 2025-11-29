@@ -23,7 +23,7 @@ class FileOrganizer:
     def organize(self):
         files = self._get_files()
         try:
-            self.backup_manager.backup_all(files)
+            self.backup_manager.backup_all()
             self._organize_files(files)
         except Exception as e:
             self.status = Status.FAILURE
@@ -63,14 +63,15 @@ class FileOrganizer:
 
     def _log_details(self, details, level):
         log = None
+        if level == CRITICAL:
+            log = self.logger.critical
+            log(details)
         if level == ERROR:
             log = self.logger.error
         elif level == INFO:
             log = self.logger.info
         elif level == WARN:
-            log = self.logger.warn
-        elif level == CRITICAL:
-            log = self.logger.critical
+            log = self.logger.warning
         elif level == DEBUG:
             log = self.logger.debug
         else:
