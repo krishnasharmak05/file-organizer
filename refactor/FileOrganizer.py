@@ -1,5 +1,5 @@
 import shutil
-from logging import CRITICAL, DEBUG, ERROR, FATAL, INFO, WARN, WARNING
+from logging import CRITICAL, DEBUG, ERROR, INFO, WARN
 from pathlib import Path
 
 from typing_extensions import Dict, List
