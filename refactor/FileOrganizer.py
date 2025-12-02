@@ -1,12 +1,10 @@
 import shutil
-from logging import CRITICAL, DEBUG, ERROR, INFO, WARN
 from pathlib import Path
 
 from typing_extensions import Dict, List
 
 from refactor.BackupManager import BackupManager
 from refactor.Classifier import Classifier
-from refactor.Exceptions import UnknownLoggingLevelException
 from refactor.Logger import Logger
 from refactor.Status import Status
 
@@ -29,12 +27,12 @@ class FileOrganizer:
             self.status = Status.FAILURE
             self.logger.error(f"Error occurred during organization: {e}")
             self.failure_reason = str(e)
-            self._log_details()
+            # self._log_details()
             self.backup_manager.rollback()
         else:
             self.backup_manager.cleanup_backups()
             self.status = Status.SUCCESS
-            self._log_details()
+            # self._log_details()
         finally:
             self._log_summary()
 
@@ -60,25 +58,6 @@ class FileOrganizer:
                         f"Error moving file {file_path} to {destination}: {e}"
                     )
                     raise
-
-    def _log_details(self, details, level):
-        log = None
-        if level == CRITICAL:
-            log = self.logger.critical
-            log(details)
-        if level == ERROR:
-            log = self.logger.error
-        elif level == INFO:
-            log = self.logger.info
-        elif level == WARN:
-            log = self.logger.warning
-        elif level == DEBUG:
-            log = self.logger.debug
-        else:
-            raise UnknownLoggingLevelException(
-                "Level of Logging is unknown. This error should not have happened!"
-            )
-        log(details)
 
     def _log_summary(self):
         if self.status == Status.SUCCESS:
