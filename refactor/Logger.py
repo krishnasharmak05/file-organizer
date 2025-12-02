@@ -1,6 +1,6 @@
 import logging
 import sys
-
+from assets.animated_print import AnimatedPrint
 from typing_extensions import Callable
 
 
@@ -9,6 +9,7 @@ class Logger:
         self.log_file_path = log_file_path
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
+        self.logger.addHandler(logging.StreamHandler(AnimatedPrint())) # Make this work
         file_handler = logging.FileHandler(self.log_file_path)
         formatter = logging.Formatter(
             "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
