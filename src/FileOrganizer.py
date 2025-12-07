@@ -3,10 +3,10 @@ from pathlib import Path
 
 from typing_extensions import Dict, List
 
-from refactor.BackupManager import BackupManager
-from refactor.Classifier import Classifier
-from refactor.Logger import Logger
-from refactor.Status import Status
+from src.BackupManager import BackupManager
+from src.Classifier import Classifier
+from src.Logger import Logger
+from src.Status import Status
 
 
 class FileOrganizer:

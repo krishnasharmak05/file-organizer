@@ -3,7 +3,7 @@ from pathlib import Path
 from typing_extensions import Any, Dict, List
 from yaml import YAMLError, safe_load
 
-from refactor.Logger import Logger
+from src.Logger import Logger
 
 
 class Classifier:

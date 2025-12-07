@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 from yaml import safe_load
 
-from refactor.FileOrganizer import FileOrganizer
+from src.FileOrganizer import FileOrganizer
 
 
 class TestIntegration:
@@ -18,13 +18,13 @@ class TestIntegration:
 
     @pytest.fixture
     def config(self):
-        with open("refactor/config.yaml", "r") as file:
+        with open("config.yaml", "r") as file:
             # return self.invert(safe_load(file))
             return safe_load(file)
 
     @pytest.fixture
     def config_path(self):
-        return "refactor/config.yaml"
+        return "config.yaml"
 
     @pytest.fixture
     def path_to_test_folder(self):

@@ -5,7 +5,7 @@ from pathlib import Path
 from customtkinter import filedialog
 
 from assets.animated_print import AnimatedPrint
-from refactor.FileOrganizer import FileOrganizer
+from src.FileOrganizer import FileOrganizer
 
 
 def get_folder()->str:
@@ -23,7 +23,7 @@ def get_folder()->str:
 
 def main():
     folder = get_folder()
-    yaml_file = Path("./config.yaml")
+    yaml_file = Path("config.yaml")
     engine = FileOrganizer(folder, yaml_file)
     engine.organize()
 
