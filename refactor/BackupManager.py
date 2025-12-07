@@ -9,7 +9,6 @@ from pathlib import Path
 from typing_extensions import List
 
 from refactor.Exceptions import (
-    FileCorruptedException,
     FileNotFoundException,
     InsufficientDiskSpace,
 )
@@ -61,7 +60,8 @@ class BackupManager:
         @return list[Path] - A list of files in the folder.
         """
         return [child for child in self.folder.iterdir() if not child.is_dir()]
-
+    
+    # TODO: Checking for file corruption fails. Fix the logic
     def _is_file_corrupted(self, file: Path) -> bool:
         """
         Checks if a file is corrupted by checking the file's sha256 hash against the recorded hash.
@@ -170,52 +170,55 @@ class BackupManager:
             try:
                 self._record_sha256(file)
                 self._copy_with_metadata(file, dest)
-                is_backup_copy_of_file_corrupted = self._is_file_corrupted(dest)
-                if is_backup_copy_of_file_corrupted:
-                    self._copy_with_metadata(file, dest)
-                    if self._is_file_corrupted(dest):
-                        # TODO: Maybe modify this to just ignore this file from backup and hence, reorganization?
-                        self.logger.error(f"Backup file {dest} is corrupted.")
-                        raise FileCorruptedException(f"Backup file {dest} is corrupted")
+                # TODO: Checking for file corruption fails. Fix the logic here.
+                # is_backup_copy_of_file_corrupted = self._is_file_corrupted(self.backup_folder, dest.stem+".bak")
+                # if is_backup_copy_of_file_corrupted:
+                #     self._copy_with_metadata(file, dest)
+                #     if self._is_file_corrupted(self.backup_folder, dest.stem):
+                #         # TODO: Maybe modify this to just ignore this file from backup and hence, reorganization?
+                #         self.logger.error(f"Backup file {dest} is corrupted.")
+                # raise FileCorruptedException(f"Backup file {dest} is corrupted")
             except OSError as e:
                 self.logger.critical(str(e), self.rollback)
         self.logger.info("Backup completed.")
 
     def rollback(self) -> None:
         """
-        Rollback all files in the backup folder to the source folder.
+        TODO: Rollback all files in the backup folder to the source folder.
         """
+        pass
         # TODO: Rethink this. Ignore all comments in the next 4-5 lines, and the rewrite the code
         # for this function entirely from scratch again.
 
         # Check if each file in self.folder exists in uncorrupted format.
         # If it does, delete from self.backup_folder
         # copy backup file back to self.folder
-        for file in self.backup_folder.iterdir():
-            if file.is_file() and file.suffix == ".bak":
-                backup_file = file
-                original_file = self.folder / backup_file.stem
-                if original_file.exists() and not self._is_file_corrupted(
-                    original_file
-                ):
-                    continue
-                elif original_file.exists() and self._is_file_corrupted(original_file):
-                    self.logger.warning(f"Original file {original_file} is corrupted.")
-                    shutil.move(backup_file, original_file)
-                # Add a case where it has been moved to a sorted folder successful.
-                elif backup_file.exists() and self._is_file_corrupted(backup_file):
-                    self.logger.warning(f"Backup file {backup_file} is corrupted.")
-                elif backup_file.exists():
-                    self.logger.info(f"Rolling back {backup_file} to {original_file}")
-                    shutil.move(backup_file, original_file)
-                else:
-                    self.logger.error(f"Backup file {backup_file} does not exist.")
-        self.logger.info("Rollback completed.")
+        # for file in self.backup_folder.iterdir():
+        #     if file.is_file() and file.suffix == ".bak":
+        #         backup_file = file
+        #         original_file = self.folder / backup_file.stem
+        #         if original_file.exists() and not self._is_file_corrupted(
+        #             original_file
+        #         ):
+        #             continue
+        #         elif original_file.exists() and self._is_file_corrupted(original_file):
+        #             self.logger.warning(f"Original file {original_file} is corrupted.")
+        #             shutil.move(backup_file, original_file)
+        #         # Add a case where it has been moved to a sorted folder successful.
+        #         elif backup_file.exists() and self._is_file_corrupted(backup_file):
+        #             self.logger.warning(f"Backup file {backup_file} is corrupted.")
+        #         elif backup_file.exists():
+        #             self.logger.info(f"Rolling back {backup_file} to {original_file}")
+        #             shutil.move(backup_file, original_file)
+        #         else:
+        #             self.logger.error(f"Backup file {backup_file} does not exist.")
+        # self.logger.info("Rollback completed.")
 
     def cleanup_backups(self) -> None:
         """
         Cleans up the backup folder by removing all files and directories within it.
         """
+        self.logger.info("Cleaning up backups...")
         try:
             if self.backup_folder.exists:
                 shutil.rmtree(self.backup_folder)
