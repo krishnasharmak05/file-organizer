@@ -19,7 +19,6 @@ class TestIntegration:
     @pytest.fixture
     def config(self):
         with open("config.yaml", "r") as file:
-            # return self.invert(safe_load(file))
             return safe_load(file)
 
     @pytest.fixture

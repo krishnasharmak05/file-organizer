@@ -27,13 +27,11 @@ class FileOrganizer:
             self.status = Status.FAILURE
             self.logger.error(f"Error occurred during organization: {e}")
             self.failure_reason = str(e)
-            # self._log_details()
             self.backup_manager.rollback()
         else:
             self.logger.info(f"Files Organized Successfully at {self.folder}.")
             self.backup_manager.cleanup_backups()
             self.status = Status.SUCCESS
-            # self._log_details()
         finally:
             self._log_summary()
 

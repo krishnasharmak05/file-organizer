@@ -1,4 +1,4 @@
-# TODO: Add Logging to all operations.
+# TODO: Add Logging to all operations. - Will be added in upcoming versions.
 import json
 import shutil
 import sys
@@ -13,29 +13,6 @@ from fileorganizer.Exceptions import (
     InsufficientDiskSpace,
 )
 from fileorganizer.Logger import Logger
-
-# from logging import CRITICAL, DEBUG, ERROR, INFO, WARN
-# from refactor.Exceptions import UnknownLoggingLevelException
-# Example Log function:
-# def _log_details(self, details, level):
-#     log = None
-#     if level == CRITICAL:
-#         log = self.logger.critical
-#         log(details)
-#     if level == ERROR:
-#         log = self.logger.error
-#     elif level == INFO:
-#         log = self.logger.info
-#     elif level == WARN:
-#         log = self.logger.warning
-#     elif level == DEBUG:
-#         log = self.logger.debug
-#     else:
-#         raise UnknownLoggingLevelException(
-#             "Level of Logging is unknown. This error should not have happened!"
-#         )
-#     log(details)
-
 
 class BackupManager:
     """
