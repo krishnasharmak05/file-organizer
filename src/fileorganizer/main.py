@@ -5,7 +5,7 @@ from pathlib import Path
 from customtkinter import filedialog
 
 from assets.animated_print import AnimatedPrint
-from src.FileOrganizer import FileOrganizer
+from fileorganizer.FileOrganizer import FileOrganizer
 
 
 def get_folder()->str:

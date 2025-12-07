@@ -8,11 +8,11 @@ from pathlib import Path
 
 from typing_extensions import List
 
-from src.Exceptions import (
+from fileorganizer.Exceptions import (
     FileNotFoundException,
     InsufficientDiskSpace,
 )
-from src.Logger import Logger
+from fileorganizer.Logger import Logger
 
 # from logging import CRITICAL, DEBUG, ERROR, INFO, WARN
 # from refactor.Exceptions import UnknownLoggingLevelException

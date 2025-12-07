@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 from yaml import safe_load
 
-from src.FileOrganizer import FileOrganizer
+from fileorganizer.FileOrganizer import FileOrganizer  # pyright: ignore[reportMissingImports]
 
 
 class TestIntegration:

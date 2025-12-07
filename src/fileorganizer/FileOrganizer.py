@@ -3,17 +3,17 @@ from pathlib import Path
 
 from typing_extensions import Dict, List
 
-from src.BackupManager import BackupManager
-from src.Classifier import Classifier
-from src.Logger import Logger
-from src.Status import Status
+from fileorganizer.BackupManager import BackupManager
+from fileorganizer.Classifier import Classifier
+from fileorganizer.Logger import Logger
+from fileorganizer.Status import Status
 
 
 class FileOrganizer:
     def __init__(self, folder: str, extension_map_path: Path) -> None:
         self.folder = Path(folder)
         self.classifier = Classifier(self.folder, extension_map_path)
-        self.logger = Logger(self.folder / "Logs" / "file_organizer.log")
+        self.logger = Logger(self.folder / "Logs" / "fileorganizer.log")
         self.backup_manager = BackupManager(self.folder)
         self.status = Status.IN_PROGRESS
         self.failure_reason = ""
