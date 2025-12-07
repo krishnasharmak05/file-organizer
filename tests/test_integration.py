@@ -18,12 +18,12 @@ class TestIntegration:
 
     @pytest.fixture
     def config(self):
-        with open("config.yaml", "r") as file:
+        with open("src/fileorganizer/config.yaml", "r") as file:
             return safe_load(file)
 
     @pytest.fixture
     def config_path(self):
-        return "config.yaml"
+        return "src/fileorganizer/config.yaml"
 
     @pytest.fixture
     def path_to_test_folder(self):

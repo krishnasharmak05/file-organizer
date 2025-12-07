@@ -18,12 +18,18 @@ version = "2.0.0"
 dev = ["pytest==9.0.2"]
 
 [tool.poetry]
+include = ["fileorganizer/config.yaml"]
 packages = [
-    { include = "fileorganizer", from="src"}
+    { include = "fileorganizer", from="src"},
+    { include = "assets", from="src"}
 ]
 
 [tool.poetry.scripts]
 fileorganizer = "fileorganizer.main:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
 
 [project.urls]

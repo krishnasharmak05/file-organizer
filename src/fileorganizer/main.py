@@ -23,7 +23,7 @@ def get_folder()->str:
 
 def main():
     folder = get_folder()
-    yaml_file = Path("config.yaml")
+    yaml_file = Path(__file__).parent / "config.yaml"
     engine = FileOrganizer(folder, yaml_file)
     engine.organize()
 
