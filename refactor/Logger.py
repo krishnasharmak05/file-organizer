@@ -10,6 +10,8 @@ from assets.animated_print import AnimatedPrint
 class Logger:
     def __init__(self, log_file_path: Path):
         self.log_file_path = log_file_path
+        self.log_file_path.parent.mkdir(parents=True, exist_ok=True)
+        self.log_file_path.touch(exist_ok=True)
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
         self.logger.addHandler(logging.StreamHandler(AnimatedPrint()))  # Make this work
@@ -30,12 +32,11 @@ class Logger:
         """
         Logs a critical message and forces the program to exit.
         """
-        self.logger.critical("The program has encountered a critical error.")
         self.logger.critical(message)
         if cleanup:
             cleanup()
-        self.logger.critical("The program will now exit.")
-        sys.exit(0)
+        self.logger.critical("The program will now exit safely.")
+        sys.exit(500)
 
     def debug(self, message):
         self.logger.debug(message)
