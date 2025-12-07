@@ -18,7 +18,7 @@ class FileOrganizer:
         self.status = Status.IN_PROGRESS
         self.failure_reason = ""
 
-    def organize(self):
+    def organize(self) -> bool:
         files = self._get_files()
         try:
             self.backup_manager.backup_all()
@@ -30,11 +30,14 @@ class FileOrganizer:
             # self._log_details()
             self.backup_manager.rollback()
         else:
+            self.logger.info(f"Files Organized Successfully at {self.folder}.")
             self.backup_manager.cleanup_backups()
             self.status = Status.SUCCESS
             # self._log_details()
         finally:
             self._log_summary()
+
+        return self.status == Status.SUCCESS
 
     def _get_files(self) -> List[Path]:
         return [
@@ -61,10 +64,7 @@ class FileOrganizer:
 
     def _log_summary(self):
         if self.status == Status.SUCCESS:
-            self.logger.info(
-                f"Files Organized Successfully at {self.folder}."
-                f"Logs can be found at {self.folder / 'Logs'}"
-            )
+            self.logger.info(f"Logs can be found at {self.folder / 'Logs'}")
         elif self.status == Status.FAILURE:
             self.logger.error(
                 f"File organization FAILED at  {self.folder}.\n"
