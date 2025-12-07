@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from typing_extensions import Dict, List
+from typing_extensions import Any, Dict, List
 from yaml import YAMLError, safe_load
 
 from refactor.Logger import Logger
@@ -15,7 +15,8 @@ class Classifier:
         self.known: List[Path] = []
         self._set_extension_map(yaml_file)
 
-    def _invert(self, config):
+    # TODO: Fix the type hints
+    def _invert(self, config: Dict[Any, Any])-> Dict[Any, Any]:
         inverted = {}
         for folder, extensions in config.items():
             for ext in extensions:
