@@ -48,6 +48,7 @@ class FileOrganizer:
 
     def _organize_files(self, files: List[Path]) -> None:
         sorted_files: Dict[str, List[Path]] = self.classifier.classify(files)
+        self.classifier.cleanup()
         for folder, _files in sorted_files.items():
             folder_path = Path(self.folder / folder)
             if not folder_path.exists():
@@ -65,6 +66,7 @@ class FileOrganizer:
     def _log_summary(self):
         if self.status == Status.SUCCESS:
             self.logger.info(f"Logs can be found at {self.folder / 'Logs'}")
+            self.logger.cleanup()
         elif self.status == Status.FAILURE:
             self.logger.error(
                 f"File organization FAILED at  {self.folder}.\n"

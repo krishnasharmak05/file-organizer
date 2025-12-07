@@ -185,6 +185,7 @@ class BackupManager:
     def rollback(self) -> None:
         """
         TODO: Rollback all files in the backup folder to the source folder.
+        Remember to remove logging handler
         """
         pass
         # TODO: Rethink this. Ignore all comments in the next 4-5 lines, and the rewrite the code
@@ -230,3 +231,5 @@ class BackupManager:
                 + "You can delete them manually."
                 + f"This error occurred while cleaning up backups: {e}",
             )
+        finally:
+            self.logger.cleanup()

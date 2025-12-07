@@ -15,12 +15,12 @@ class Logger:
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
         self.logger.addHandler(logging.StreamHandler(AnimatedPrint()))  # Make this work
-        file_handler = logging.FileHandler(self.log_file_path)
+        self.file_handler = logging.FileHandler(self.log_file_path)
         formatter = logging.Formatter(
             "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
         )
-        file_handler.setFormatter(formatter)
-        self.logger.addHandler(file_handler)
+        self.file_handler.setFormatter(formatter)
+        self.logger.addHandler(self.file_handler)
 
     def info(self, message):
         self.logger.info(message)
@@ -43,3 +43,6 @@ class Logger:
 
     def error(self, message):
         self.logger.error(message)
+    
+    def cleanup(self):
+        self.logger.removeHandler(self.file_handler)

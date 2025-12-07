@@ -53,3 +53,6 @@ class Classifier:
             folder_path_dict.setdefault(folder_path, []).append(file)
             self.known.append(file)
         return folder_path_dict
+    
+    def cleanup(self):
+        self.logger.cleanup()
