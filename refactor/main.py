@@ -21,16 +21,10 @@ def get_folder()->str:
         sys.exit(0)
     return folder
 
-
-def get_extension_map():
-    # TODO: Do this after completing the Classifier class.
-    return {}
-
-
 def main():
     folder = get_folder()
-    extension_map = get_extension_map()
-    engine = FileOrganizer(folder, extension_map)
+    yaml_file = Path("./config.yaml")
+    engine = FileOrganizer(folder, yaml_file)
     engine.organize()
 
 
