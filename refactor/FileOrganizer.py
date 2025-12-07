@@ -10,9 +10,9 @@ from refactor.Status import Status
 
 
 class FileOrganizer:
-    def __init__(self, folder: str, extension_map: Dict[str, str]) -> None:
+    def __init__(self, folder: str, extension_map_path: Path) -> None:
         self.folder = Path(folder)
-        self.classifier = Classifier(self.folder, extension_map)
+        self.classifier = Classifier(self.folder, extension_map_path)
         self.logger = Logger(self.folder / "Logs" / "file_organizer.log")
         self.backup_manager = BackupManager(self.folder)
         self.status = Status.IN_PROGRESS
