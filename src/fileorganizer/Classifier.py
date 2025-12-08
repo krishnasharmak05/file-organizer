@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from typing_extensions import Any, Dict, List
+from typing_extensions import Dict, List
 from yaml import YAMLError, safe_load
 
 from fileorganizer.Logger import Logger
@@ -9,14 +9,13 @@ from fileorganizer.Logger import Logger
 class Classifier:
     def __init__(self, folder: Path, yaml_file: Path) -> None:
         self.folder: Path = folder
-        self.extension_map: Dict[str, List[str]] = {}
+        self.extension_map: Dict[str, str] = {}
         self.logger: Logger = Logger(self.folder / "Logs" / "classifier.log")
         self.unknown: List[Path] = []
         self.known: List[Path] = []
         self._set_extension_map(yaml_file)
 
-    # TODO: Fix the type hints
-    def _invert(self, config: Dict[Any, Any])-> Dict[Any, Any]:
+    def _invert(self, config: Dict[str, List[str]]) -> Dict[str, str]:
         inverted = {}
         for folder, extensions in config.items():
             for ext in extensions:
@@ -53,6 +52,6 @@ class Classifier:
             folder_path_dict.setdefault(folder_path, []).append(file)
             self.known.append(file)
         return folder_path_dict
-    
+
     def cleanup(self):
         self.logger.cleanup()
