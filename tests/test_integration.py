@@ -7,7 +7,7 @@ from yaml import safe_load
 
 from fileorganizer.FileOrganizer import FileOrganizer  # pyright: ignore[reportMissingImports]
 
-
+# TODO: Switch to using pytest's tmp_path instead of manually creating a folder
 class TestIntegration:
     def invert(self, config):
         inverted = {}
@@ -38,8 +38,8 @@ class TestIntegration:
 
     @pytest.mark.usefixtures("path_to_test_folder", "config_path")
     def sort_files(self, path_to_test_folder, config_path) -> bool:
-        engine = FileOrganizer(path_to_test_folder, config_path)
-        return engine.organize()
+        organizer = FileOrganizer(path_to_test_folder, config_path)
+        return organizer.organize()
 
     @pytest.mark.usefixtures("path_to_test_folder")
     def remove_created_files(self, path_to_test_folder):
