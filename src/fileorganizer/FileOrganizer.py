@@ -55,6 +55,7 @@ class FileOrganizer:
                 destination = folder_path / file_path.name
                 try:
                     shutil.move(str(file_path), str(destination))
+                    self.logger.detail(f"Moved {file_path} to {destination}")
                 except Exception as e:
                     self.logger.error(
                         f"Error moving file {file_path} to {destination}: {e}"

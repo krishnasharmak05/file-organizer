@@ -25,6 +25,11 @@ class Logger:
     def info(self, message):
         self.logger.info(message)
 
+    def detail(self, message):
+        # Make this go into a separate Details.log file, which should be accessible by backup manager as well.
+        # Backup manager will use this file to check the transactions before rollback.
+        self.logger.info(message)
+
     def warning(self, message):
         self.logger.warning(message)
 
@@ -43,6 +48,6 @@ class Logger:
 
     def error(self, message):
         self.logger.error(message)
-    
+
     def cleanup(self):
         self.logger.removeHandler(self.file_handler)
