@@ -1,4 +1,5 @@
 /.vscode
+.zed/
 __pycache__
 /testing.py
 /tempCodeRunnerFile.py
