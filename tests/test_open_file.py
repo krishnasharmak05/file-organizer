@@ -7,7 +7,6 @@ from tests.utils import LockedFile
 def test_file_open_causes_failure(tmp_path):
     file_path = tmp_path / "locked_file.txt"
     file_path.write_text("hello")
-
     with LockedFile(file_path):
         organizer = FileOrganizer(tmp_path, Path("src/fileorganizer/config.yaml"))
         result = organizer.organize()
