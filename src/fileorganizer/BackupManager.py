@@ -24,11 +24,13 @@ class BackupManager:
     @property logger: Logger - The logger instance.
     """
 
-    def __init__(self, folder) -> None:
+    def __init__(self, folder, classifier) -> None:
         self.folder: Path = folder
         self.backup_folder: Path = self.folder / "Backups"
         self.hash_folder: Path = self.backup_folder / "Hashes"
+        self.classifier = classifier
         self.logger: Logger = Logger(self.folder / "Logs" / "backup_manager.log")
+        self.transaction_log: Path = self.logger.details_file_path
 
     def _get_files(self) -> list[Path]:
         """
@@ -39,22 +41,22 @@ class BackupManager:
         return [child for child in self.folder.iterdir() if not child.is_dir()]
     
     # TODO: Checking for file corruption fails. Fix the logic
-    def _is_file_corrupted(self, file: Path) -> bool:
-        """
-        Checks if a file is corrupted by checking the file's sha256 hash against the recorded hash.
+    # def _is_file_corrupted(self, file: Path, hash_path: Path, chunk_size: int = 1024 * 1024, is_backup_file: bool = False) -> bool:
+    #     """
+    #     Checks if a file is corrupted by checking the file's sha256 hash against the recorded hash.
 
-        @param file: Path - The path to the file to check.
+    #     @param file: Path - The path to the file to check.
 
-        @return bool - Returns True if the file is corrupted, False otherwise.
-        """
-        hash_file = self.hash_folder / f"{file.name}.json"
-        if not hash_file.exists():
-            return True
-        with hash_file.open("rb") as f:
-            hash_json = json.load(f)
-            recorded_hash = hash_json["sha256"]
-            current_hash = self._get_hash(file)
-        return recorded_hash != current_hash
+    #     @return bool - Returns True if the file is corrupted, False otherwise.
+    #     """
+    #     hash_file = self.hash_folder / f"{file.name}.json"
+    #     if not hash_file.exists():
+    #         return True
+    #     with hash_file.open("rb") as f:
+    #         hash_json = json.load(f)
+    #         recorded_hash = hash_json["sha256"]
+    #         current_hash = self._get_hash(file)
+    #     return recorded_hash != current_hash
 
     def _get_hash(self, path: Path, chunk_size: int = 1024 * 1024) -> str:
         """
@@ -164,7 +166,13 @@ class BackupManager:
         TODO: Rollback all files in the backup folder to the source folder.
         Remember to remove logging handler
         """
-        pass
+        # Now it works like in a SQL DBMS. Check for transaction start and end, if both exist, then don't rollback. Else rollback.
+        # Follows the principle of Atomicity.
+        if not self.transaction_log.exists():
+            self.logger.debug("No transaction log found. Skipping rollback.")
+            return
+        
+        
         # TODO: Rethink this. Ignore all comments in the next 4-5 lines, and the rewrite the code
         # for this function entirely from scratch again.
 

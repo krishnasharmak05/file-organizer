@@ -14,7 +14,7 @@ class FileOrganizer:
         self.folder = Path(folder)
         self.classifier = Classifier(self.folder, extension_map_path)
         self.logger = Logger(self.folder / "Logs" / "fileorganizer.log")
-        self.backup_manager = BackupManager(self.folder)
+        self.backup_manager = BackupManager(self.folder, self.classifier)
         self.status = Status.IN_PROGRESS
         self.failure_reason = ""
 

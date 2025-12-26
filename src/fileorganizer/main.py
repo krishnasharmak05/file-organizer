@@ -16,7 +16,7 @@ def get_folder()->str:
         initialdir=initial_path, mustexist=True, title="Select a folder to sort"
     )
     if not folder:
-        AnimatedPrint.animated_print("No folder selected. Exiting safely...")
+        AnimatedPrint().animated_print("No folder selected. Exiting safely...")
         time.sleep(2)
         sys.exit(0)
     return folder
