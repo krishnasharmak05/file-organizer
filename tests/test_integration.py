@@ -60,7 +60,7 @@ class TestIntegration:
                 path_to_test_folder.mkdir(parents=True, exist_ok=True)
             for folder, extensions in config.items():
                 for ext in extensions:
-                    file_name = f"{folder}_{ext}_{int(time.time())}"
+                    file_name = f"{folder}_{int(time.time())}"
                     file_path = path_to_test_folder / f"{file_name}{ext}"
                     file_path.touch()
             assert True

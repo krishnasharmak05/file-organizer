@@ -25,7 +25,7 @@ packages = [
 ]
 
 [tool.poetry.scripts]
-fileorganizer = "fileorganizer.main:main"
+file-organizer = "fileorganizer.main:main"
 
 [build-system]
 requires = ["poetry-core"]
@@ -35,3 +35,8 @@ build-backend = "poetry.core.masonry.api"
 [project.urls]
 GitHub = "https://github.com/krishnasharmak05/file-organizer"
 Issues = "https://github.com/krishnasharmak05/file-organizer/issues"
+
+[dependency-groups]
+dev = [
+    "portalocker (>=3.2.0,<4.0.0)"
+]
