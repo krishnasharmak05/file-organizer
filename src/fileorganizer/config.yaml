@@ -1,3 +1,30 @@
+C Files:
+  - ".c"
+  - ".h"
+
+CPP Files:
+  - ".cpp"
+  - ".hpp"
+
+Java Files:
+  - ".java"
+
+Python Files:
+  - ".py"
+  - ".ipynb"
+  - ".pyc"
+
+XML Files:
+  - ".xml"
+
+ISO Files:
+  - ".iso"
+
+StarUML Files:
+  - ".mdj"
+
+
+
 Text Files:
   - ".txt"
 
@@ -48,10 +75,10 @@ Image Files:
 Gif Files:
   - ".gif"
 
-Python Files:
-  - ".py"
-
 Zip Files:
   - ".zip"
   - ".rar"
   - ".7z"
+  - ".gz"
+  - ".xz"
+  - ".bz2"

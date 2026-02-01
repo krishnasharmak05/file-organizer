@@ -45,7 +45,7 @@ class Classifier:
     def classify(self, files: List[Path]) -> Dict[str, List[Path]]:
         folder_path_dict = {}
         for file in files:
-            folder_path = self.extension_map.get(file.suffix)
+            folder_path = self.extension_map.get(file.suffix.lower())
             if not folder_path:
                 self.unknown.append(file)
                 continue

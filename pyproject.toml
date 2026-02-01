@@ -5,7 +5,8 @@ authors = [
 dependencies = [
     "customTkinter==5.2.2",
     "PyAutoGUI==0.9.54",
-    "pyyaml==6.0.3"
+    "pyyaml==6.0.3",
+    "typing-extensions>=4.15.0",
 ]
 desciption = "File extension based file organizer"
 license = {file = "LICENSE"}
@@ -27,6 +28,11 @@ packages = [
 [tool.poetry.scripts]
 file-organizer = "fileorganizer.main:main"
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-ra"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
@@ -38,5 +44,6 @@ Issues = "https://github.com/krishnasharmak05/file-organizer/issues"
 
 [dependency-groups]
 dev = [
-    "portalocker (>=3.2.0,<4.0.0)"
+    "portalocker (>=3.2.0,<4.0.0)",
+    "pytest>=9.0.2",
 ]

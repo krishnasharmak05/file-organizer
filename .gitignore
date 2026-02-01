@@ -7,3 +7,5 @@ __pycache__
 venv
 /test_folder
 /dist
+/.venv
+/.pytest_cache

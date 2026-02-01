@@ -14,6 +14,7 @@ from fileorganizer.Exceptions import (
 )
 from fileorganizer.Logger import Logger
 
+
 class BackupManager:
     """
     Handles backups, cleanups after the file organisation and rollbacks, in case of a failure.
@@ -24,13 +25,14 @@ class BackupManager:
     @property logger: Logger - The logger instance.
     """
 
-    def __init__(self, folder, classifier) -> None:
+    def __init__(self, folder, classifier, dereference_symlinks: bool = False) -> None:
         self.folder: Path = folder
         self.backup_folder: Path = self.folder / "Backups"
         self.hash_folder: Path = self.backup_folder / "Hashes"
         self.classifier = classifier
         self.logger: Logger = Logger(self.folder / "Logs" / "backup_manager.log")
         self.transaction_log: Path = self.logger.details_file_path
+        self.follow_symlinks: bool = dereference_symlinks
 
     def _get_files(self) -> list[Path]:
         """
@@ -39,24 +41,36 @@ class BackupManager:
         @return list[Path] - A list of files in the folder.
         """
         return [child for child in self.folder.iterdir() if not child.is_dir()]
-    
+
     # TODO: Checking for file corruption fails. Fix the logic
-    # def _is_file_corrupted(self, file: Path, hash_path: Path, chunk_size: int = 1024 * 1024, is_backup_file: bool = False) -> bool:
-    #     """
-    #     Checks if a file is corrupted by checking the file's sha256 hash against the recorded hash.
+    def _is_file_corrupted(self, file: Path) -> bool:
+        """
+        Checks if a file is corrupted by checking the file's sha256 hash against the recorded hash.
 
-    #     @param file: Path - The path to the file to check.
+        @param file: Path - The path to the file to check.
 
-    #     @return bool - Returns True if the file is corrupted, False otherwise.
-    #     """
-    #     hash_file = self.hash_folder / f"{file.name}.json"
-    #     if not hash_file.exists():
-    #         return True
-    #     with hash_file.open("rb") as f:
-    #         hash_json = json.load(f)
-    #         recorded_hash = hash_json["sha256"]
-    #         current_hash = self._get_hash(file)
-    #     return recorded_hash != current_hash
+        @return bool - Returns True if the file is corrupted, False otherwise.
+        """
+        hash_file = self.hash_folder / f"{file.name}.json"
+
+        if not hash_file.exists():
+            self.logger.error(f"Hash file for {file.name} does not exist.")
+            return True
+        try:
+            with hash_file.open("r", encoding="utf-8") as f:
+                hash_json = json.load(f)
+
+            recorded_hash = hash_json["sha256"]
+            recorded_size = hash_json["size"]
+
+            if file.stat().st_size != recorded_size:
+                return True
+            current_hash = self._get_hash(file)
+            return current_hash != recorded_hash
+
+        except (OSError, KeyError, json.JSONDecodeError) as e:
+            self.logger.error(f"Failed to validate hash for {file.name}: {e}")
+            return True
 
     def _get_hash(self, path: Path, chunk_size: int = 1024 * 1024) -> str:
         """
@@ -74,7 +88,7 @@ class BackupManager:
         hash = h.hexdigest()
         return hash
 
-    def _record_sha256(self, path: Path, chunk_size: int = 1024 * 1024) -> Path:
+    def _record_sha256(self, backup_file: Path, original_file: Path) -> Path:
         """
         Record the SHA256 hash of a file in a json file.
 
@@ -91,29 +105,30 @@ class BackupManager:
 
         @return Path - The path to the json file containing the hash information
         """
-        hash = self._get_hash(path, chunk_size)
+        hash_value = self._get_hash(backup_file)
         hash_json = {
-            "file": path.name,
-            "size": path.stat().st_size,
-            "sha256": hash,
+            "original_name": original_file.name,
+            "backup_name": backup_file.name,
+            "size": backup_file.stat().st_size,
+            "sha256": hash_value,
             "timestamp": int(time.time()),
         }
         self.hash_folder.mkdir(parents=True, exist_ok=True)
-        hash_file = self.hash_folder / f"{path.name}.json"
-        hash_file.write_text(json.dumps(hash_json))
+        hash_file = self.hash_folder / f"{backup_file.name}.json"
+        hash_file.write_text(json.dumps(hash_json), encoding="utf-8")
         return hash_file
 
-    def _copy_with_metadata(self, src: Path, dest: Path) -> None:
-        """
-        Copies a file with its metadata.
+    # def _copy_with_metadata(self, src: Path, dest: Path) -> None:
+    #     """
+    #     Copies a file with its metadata.
 
-        Args:
-            src (Path): The source file path.
-            dest (Path): The destination file path.
-        """
-        with src.open("rb") as r, dest.open("wb") as w:
-            shutil.copyfileobj(r, w)
-        shutil.copystat(src, dest)
+    #     Args:
+    #         src (Path): The source file path.
+    #         dest (Path): The destination file path.
+    #     """
+    #     with src.open("rb") as r, dest.open("wb") as w:
+    #         shutil.copyfileobj(r, w)
+    #     shutil.copystat(src, dest)
 
     def backup_all(self) -> None:
         """
@@ -138,28 +153,24 @@ class BackupManager:
             raise InsufficientDiskSpace("Not enough disk space to backup all files.")
         self.logger.info("Starting backup...")
         for file in files:
+            if file.suffix == ".lnk":
+                continue
             dest = self.backup_folder / f"{file.name}.bak"
             if dest.exists():
-                # TODO: Implement the ability to prevent reorganization if backup for a file fails.
-                self.logger.error(
-                    f"Backup file {dest} already exists. "
-                    "This file is not backed up, and hence it isn't reorgranized either."
-                )
-
+                self.logger.error(f"File {file.name} already exists in backup folder.")
+                continue
             try:
-                self._record_sha256(file)
-                self._copy_with_metadata(file, dest)
-                # TODO: Checking for file corruption fails. Fix the logic here.
-                # is_backup_copy_of_file_corrupted = self._is_file_corrupted(self.backup_folder, dest.stem+".bak")
-                # if is_backup_copy_of_file_corrupted:
-                #     self._copy_with_metadata(file, dest)
-                #     if self._is_file_corrupted(self.backup_folder, dest.stem):
-                #         # TODO: Maybe modify this to just ignore this file from backup and hence, reorganization?
-                #         self.logger.error(f"Backup file {dest} is corrupted.")
-                # raise FileCorruptedException(f"Backup file {dest} is corrupted")
-            except OSError as e:
-                self.logger.critical(str(e), self.rollback)
-        self.logger.info("Backup completed.")
+                # self._copy_with_metadata(file, dest)
+                shutil.copy2(file, dest, follow_symlinks=self.follow_symlinks)
+                self._record_sha256(dest, file)
+
+                if self._is_file_corrupted(dest):
+                    raise IOError(f"Backup file {dest.name} is corrupted.")
+
+            except Exception as e:
+                self.logger.critical(e)
+                self.rollback()
+                raise
 
     def rollback(self) -> None:
         """
@@ -168,37 +179,31 @@ class BackupManager:
         """
         # Now it works like in a SQL DBMS. Check for transaction start and end, if both exist, then don't rollback. Else rollback.
         # Follows the principle of Atomicity.
-        if not self.transaction_log.exists():
-            self.logger.debug("No transaction log found. Skipping rollback.")
-            return
-        
-        
-        # TODO: Rethink this. Ignore all comments in the next 4-5 lines, and the rewrite the code
-        # for this function entirely from scratch again.
+        self.logger.warning("Starting rollback...")
 
-        # Check if each file in self.folder exists in uncorrupted format.
-        # If it does, delete from self.backup_folder
-        # copy backup file back to self.folder
-        # for file in self.backup_folder.iterdir():
-        #     if file.is_file() and file.suffix == ".bak":
-        #         backup_file = file
-        #         original_file = self.folder / backup_file.stem
-        #         if original_file.exists() and not self._is_file_corrupted(
-        #             original_file
-        #         ):
-        #             continue
-        #         elif original_file.exists() and self._is_file_corrupted(original_file):
-        #             self.logger.warning(f"Original file {original_file} is corrupted.")
-        #             shutil.move(backup_file, original_file)
-        #         # Add a case where it has been moved to a sorted folder successful.
-        #         elif backup_file.exists() and self._is_file_corrupted(backup_file):
-        #             self.logger.warning(f"Backup file {backup_file} is corrupted.")
-        #         elif backup_file.exists():
-        #             self.logger.info(f"Rolling back {backup_file} to {original_file}")
-        #             shutil.move(backup_file, original_file)
-        #         else:
-        #             self.logger.error(f"Backup file {backup_file} does not exist.")
-        # self.logger.info("Rollback completed.")
+        if not self.backup_folder.exists():
+            self.logger.warning("No Backup folder found. Nothing to rollback.")
+            return
+
+        for backup_file in self.backup_folder.glob("*.bak"):
+            if backup_file.suffix != ".bak":
+                continue
+
+            if self._is_file_corrupted(backup_file):
+                self.logger.error(f"Corrupted backup detected: {backup_file}")
+                continue
+
+            original_path = self.folder / backup_file.stem
+
+            try:
+                if original_path.exists():
+                    original_path.unlink()
+                shutil.copy2(backup_file, original_path, follow_symlinks=False)
+                self.logger.info(f"Restored {original_path}")
+            except OSError as e:
+                self.logger.critical(f"Rollback failed for {original_path}: {e}")
+
+        self.logger.info("Rollback Complete.")
 
     def cleanup_backups(self) -> None:
         """

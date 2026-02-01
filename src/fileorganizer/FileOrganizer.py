@@ -41,7 +41,8 @@ class FileOrganizer:
         return [
             p
             for p in self.folder.iterdir()
-            if p.is_file() and p.name not in ("logging.txt",)
+            if p.is_file() 
+            # and p.name not in ("logging.txt",)
         ]
 
     def _organize_files(self, files: List[Path]) -> None:
@@ -53,6 +54,9 @@ class FileOrganizer:
                 folder_path.mkdir(parents=True, exist_ok=True)
             for file_path in _files:
                 destination = folder_path / file_path.name
+                if destination.suffix == ".lnk":
+                    self.logger.warning(f"Skipping {file_path} as it is a shortcut.")
+                    continue
                 try:
                     shutil.move(str(file_path), str(destination))
                     self.logger.detail(f"Moved {file_path} to {destination}")
