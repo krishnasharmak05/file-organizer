@@ -171,13 +171,13 @@ class BackupManager:
                 self.logger.critical(e)
                 self.rollback()
                 raise
+        self.logger.info("Backup Complete...")
 
     def rollback(self) -> None:
         """
-        TODO: Rollback all files in the backup folder to the source folder.
+        Rollback all files in the backup folder to the source folder.
         Remember to remove logging handler
         """
-        # Now it works like in a SQL DBMS. Check for transaction start and end, if both exist, then don't rollback. Else rollback.
         # Follows the principle of Atomicity.
         self.logger.warning("Starting rollback...")
 
