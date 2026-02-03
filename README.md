@@ -2,13 +2,17 @@
 
 This program organises all files in a directory into different directories based on their file extensions. I built this as a personal project during my first year of Engineering.
 
-## NOTICE
- 
-This program has only been tested on Windows 11. 
+
+## Installation
+
+To install the program, run the following command:
+
+```
+pipx install poetry
+poetry install
+```
 
 ## TODO
 
-* Test this program on operating systems other than Windows 11.
-* Add docs, __init__.py, as required.
-* Add try and excepts for import statements. If ModuleNotFound exception, then install the module; Can also add a workaround instead. Use the requirements.txt file.
-* Make the program as general as possible.
+* Test this program on operating systems other than Windows 11 using GitHub Actions.
+* Add docs, as required.

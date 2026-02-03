@@ -1,5 +1,11 @@
 /.vscode
+.zed/
 __pycache__
 /testing.py
 /tempCodeRunnerFile.py
 /Refactors.txt
+venv
+/test_folder
+/dist
+/.venv
+/.pytest_cache

@@ -1,3 +1,0 @@
-customTkinter
-PyAutoGUI
-pyttsx3
