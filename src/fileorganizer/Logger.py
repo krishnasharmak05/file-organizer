@@ -11,7 +11,7 @@ from assets.animated_print import AnimatedPrint
 class Logger:
     def __init__(self, log_file_path: Path):
         self.log_file_path = log_file_path
-        self.details_file_path = log_file_path.parent / "Details.log"
+        self.details_file_path = log_file_path.parent / "details.log"
 
         self.log_file_path.parent.mkdir(parents=True, exist_ok=True)
         self.log_file_path.touch(exist_ok=True)
