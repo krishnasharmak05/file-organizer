@@ -15,9 +15,6 @@ readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.12"
 version = "2.0.0"
 
-[project.optional-dependencies]
-dev = ["pytest==9.0.2"]
-
 [tool.poetry]
 include = ["fileorganizer/config.yaml"]
 packages = [
@@ -45,5 +42,5 @@ Issues = "https://github.com/krishnasharmak05/file-organizer/issues"
 [dependency-groups]
 dev = [
     "portalocker (>=3.2.0,<4.0.0)",
-    "pytest>=9.0.2",
+    "pytest==9.2.0",
 ]
